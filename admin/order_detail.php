@@ -41,7 +41,7 @@ if(isset($_POST['search'])){
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Product Listing</h3>
+                <h3 class="card-title">Order Listing</h3>
               </div>
 
               <?php
@@ -56,46 +56,33 @@ if(isset($_POST['search'])){
               $offset = ($pageno - 1) * $numOfrecs; //for pages
 
             
-              if(empty($_POST['search']) && empty($_COOKIE['search'])){
-                $stmt = $pdo->prepare("SELECT * FROM users ORDER BY id DESC");
+                $stmt = $pdo->prepare("SELECT * FROM sale_order_detail ORDER BY id DESC");
                 $stmt->execute();
                 $rawResult = $stmt->fetchAll();
                 $total_pages = ceil(count($rawResult) / $numOfrecs);
 
-                $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC LIMIT $offset,$numOfrecs");
+                $stmt = $pdo->prepare("SELECT * FROM sale_order_detail WHERE sale_order_id=".$_GET['id']." LIMIT $offset,$numOfrecs");
                 $stmt->execute();
                 $result = $stmt->fetchAll();
-              }else{
-                $searchKey = $_POST['search'] ? $_POST['search'] : $_COOKIE['search'];
-                $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
-                // print_r($stmt);exit();
-                $stmt->execute();
-                $rawResult = $stmt->fetchAll();
-                $total_pages = ceil(count($rawResult) / $numOfrecs);
-
-                $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC LIMIT $offset,$numOfrecs");
-                $stmt->execute();
-                $result = $stmt->fetchAll();
-              }
 
               ?>
               <!-- /.card-header -->
               <div class="card-body">
 
+                <a href="order_list.php" class="btn btn-default">Back</a>
+
                 <div>
-                  <a href="product_add.php" type="button" class="btn btn-success">Create New Product</a>
+                  
                 </div><br>
 
                 <table class="table table-bordered">
                   <thead>                  
                     <tr>
                       <th style="width: 10px">#</th>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>Category</th>
-                      <th>Instock</th>
-                      <th>Price</th>
-                      <th style="width: 40px">Actions</th>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Order Date</th>
+                     
                     </tr>
                   </thead>
                   <tbody>
@@ -104,32 +91,28 @@ if(isset($_POST['search'])){
 
                   if($result){
 
-                  $i = 1;
+                  $i = $offset + 1;
                   foreach($result as $value){    ?>
 
                   <?php 
-                  $catStmt = $pdo->prepare("SELECT * FROM categories WHERE id=".$value['category_id']);
-                  $catStmt->execute();
-                  $catResult = $catStmt->fetchAll();
+                    $pStmt = $pdo->prepare("SELECT * FROM products WHERE id=".$value['product_id']);
+                    $pStmt->execute();
+                    $pResult = $pStmt->fetchAll();
     
                   ?>
 
                     <tr>
                       <td><?php echo $i; ?></td>
-                      <td><?php echo escape($value['name']); ?></td>
-                      <td><?php echo escape(substr($value['description'],0,30)); ?></td>
-                      <td><?php echo escape($catResult[0]['name']); ?></td>
+                      <td><?php echo escape($pResult[0]['name']); ?></td>
                       <td><?php echo escape($value['quantity']); ?></td>
-                      <td><?php echo escape($value['price']); ?></td>
+                      <td><?php echo escape(date('Y-m-d',strtotime($value['order_date']))); ?></td>
                       <td>
                         <div class="btn-group">
-                          <div>
-                            <a href="product_edit.php?id=<?php echo $value['id'] ?>" type="button" class="btn btn-warning">Edit</a>
+                          <div class="container">
+                            
                           </div>
                           <div>
-                            <a href="product_delete.php?id=<?php echo $value['id'] ?>"
-                             onclick="return confirm('Are you sure you want to delete this?')"
-                             type="button" class="btn btn-danger">Delete</a>
+                            
                           </div>
                         </div>
                       </td>
