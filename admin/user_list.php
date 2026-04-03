@@ -7,12 +7,12 @@ require '../config/common.php';
 
 
 if(empty($_SESSION['user_id']) || empty($_SESSION['logged_in'])){
-  header('Location: login.php');
+  header('Location: /admin/login.php');
   exit();
 };
 
 if($_SESSION['role'] != 1){
-  header('Location: login.php');
+  header('Location: /admin/login.php');
 }
 
 $searchKey = "";
@@ -65,14 +65,15 @@ if(isset($_POST['search'])){
                 $stmt->execute();
                 $result = $stmt->fetchAll();
               }else{
-                $searchKey = $_POST['search'] ? $_POST['search'] : $_COOKIE['search'];
+                // $searchKey = $_POST['search'] ? $_POST['search'] : $_COOKIE['search'];
+                $searchKey = !empty($_POST['search']) ? $_POST['search'] : (isset($_COOKIE['search']) ? $_COOKIE['search'] : '');
                 $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
                 // print_r($stmt);exit();
                 $stmt->execute();
                 $rawResult = $stmt->fetchAll();
                 $total_pages = ceil(count($rawResult) / $numOfrecs);
 
-                $stmt = $pdo->prepare("SELECT * FROM categories WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfrecs");
+                $stmt = $pdo->prepare("SELECT * FROM users WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfrecs");
                 $stmt->execute();
                 $result = $stmt->fetchAll();
               }

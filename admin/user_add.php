@@ -6,23 +6,29 @@ require '../config/config.php';
 require '../config/common.php';
 
 if(empty($_SESSION['user_id']) || empty($_SESSION['logged_in'])){
-  header('Location: login.php');
+  header('Location: /admin/login.php');
   exit();
 };
 
 if($_SESSION['role'] != 1){
-  header('Location: login.php');
+  header('Location: /admin/login.php');
 }
 
 if ($_POST) {
 
-    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || strlen($_POST['password']) < 4){
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['password']) || strlen($_POST['password']) < 4){
 
       if(empty($_POST['name'])){
         $nameError = "name cannot be null";
       }
       if(empty($_POST['email'])){
         $emailError = "email cannot be null";
+      }
+      if(empty($_POST['phone'])){
+        $phoneError = "phone cannot be null";
+      }
+      if(empty($_POST['address'])){
+        $addressError = "address cannot be null";
       }
       if(empty($_POST['password'])){
         $passwordError = "password cannot be null";
@@ -34,6 +40,8 @@ if ($_POST) {
     }else {
       $name = $_POST['name'];
       $email = $_POST['email'];
+      $phone = $_POST['phone'];
+      $address = $_POST['address'];
       
       $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
 
@@ -53,9 +61,9 @@ if ($_POST) {
       if($user){
           echo "<script>alert('Email duplicated')</script>";
       }else{
-          $stmt = $pdo->prepare("INSERT INTO users(name,email,password,role) VALUES (:name,:email,:password,:role)");
+          $stmt = $pdo->prepare("INSERT INTO users(name,email,password,phone,address,role) VALUES (:name,:email,:password,:address,:phone,:role)");
           $result = $stmt->execute(
-              array(':name'=>$name,':email'=>$email,':password'=>$password,':role'=>$role)
+              array(':name'=>$name,':email'=>$email,':password'=>$password,':role'=>$role,':phone'=>$phone,':address'=>$address)
           );
 
           if($result){
@@ -92,6 +100,16 @@ if ($_POST) {
               <div class="form-group">
                 <label for="email">Email</label><p style="color: red;"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
                 <input type="email" class="form-control" name="email" value="">
+              </div>
+
+              <div class="form-group">
+                <label for="phone">Phone</label><p style="color: red;"><?php echo empty($phoneError) ? '' : '*'.$phoneError; ?></p>
+                <input type="text" class="form-control" name="phone" value="">
+              </div>
+
+              <div class="form-group">
+                <label for="address">Address</label><p style="color: red;"><?php echo empty($addressError) ? '' : '*'.$addressError; ?></p>
+                <input type="text" class="form-control" name="address" value="">
               </div>
 
               <div class="from-group">

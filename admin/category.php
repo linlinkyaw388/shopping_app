@@ -8,12 +8,12 @@ require '../config/common.php';
 
 
 if(empty($_SESSION['user_id']) || empty($_SESSION['logged_in'])){
-  header('Location: login.php');
+  header('Location: /admin/login.php');
   exit();
 };
 
 if($_SESSION['role'] != 1){
-  header('Location: login.php');
+  header('Location: /admin/login.php');
 };
 
 $searchKey = '';
@@ -25,6 +25,15 @@ if(isset($_POST['search'])){
     setcookie('search','', -1,'/');
   }
 };
+
+// if(($_POST['search'])){
+//   setcookie('search', $_POST['search'], time() + (86400 * 30), "/"); // 86400 = 1 day
+// }else{
+//   if(empty($_GET['pageno'])) {
+//     unset($_COOKIE['search']);
+//     setcookie('search','', -1,'/');
+//   }
+// };
 ?>
 
 
@@ -52,7 +61,7 @@ if(isset($_POST['search'])){
                 $pageno = 1;
               }
 
-              $numOfrecs = 5;
+              $numOfrecs = 1;
               $offset = ($pageno - 1) * $numOfrecs; //for pages
 
             
@@ -66,7 +75,8 @@ if(isset($_POST['search'])){
                 $stmt->execute();
                 $result = $stmt->fetchAll();
               }else{
-                $searchKey = $_POST['search'] ? $_POST['search'] : $_COOKIE['search'];
+                // $searchKey = $_POST['search'] ? $_POST['search'] : $_COOKIE['search'];
+                $searchKey = !empty($_POST['search']) ? $_POST['search'] : (isset($_COOKIE['search']) ? $_COOKIE['search'] : '');
                 $stmt = $pdo->prepare("SELECT * FROM categories WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
                 // print_r($stmt);exit();
                 $stmt->execute();
