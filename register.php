@@ -5,7 +5,9 @@ session_start();
 require 'config/config.php';
 require 'config/common.php';
 
-if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['password']) || strlen($_POST['password']) < 4){
+if($_POST){
+
+	if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['phone']) || empty($_POST['address']) || empty($_POST['password']) || strlen($_POST['password']) < 4){
 	
 	if(empty($_POST['name'])){
 		$nameError = 'name is required';
@@ -26,28 +28,29 @@ if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['phone']) || 
 		$passwordError = 'password should be 4 chars at least';
 	}
 
-}else{
-
-	$name = $_POST['name'];
-	$email = $_POST['email'];
-	$password = password_hash($_POST['password'],PASSWORD_DEFAULT);
-	$phone = $_POST['phone'];
-	$address = $_POST['address'];
-
-	$stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
-	$result = $stmt->execute([':email'=>$email]);
-	$user = $stmt->fetch(PDO::FETCH_ASSOC);
-	if($user){
-		echo "<script>alert('Email duplicated')</script>";
 	}else{
-		$stmt = $pdo->prepare("INSERT INTO users(name,email,phone,address,password) VALUES (:name,:email,:phone,:address,:password)");
 
-		$result = $stmt->execute(
-			array(':name'=>$name,':email'=>$email,':phone'=>$phone,':address'=>$address,':password'=>$password)
-		);
+		$name = $_POST['name'];
+		$email = $_POST['email'];
+		$password = password_hash($_POST['password'],PASSWORD_DEFAULT);
+		$phone = $_POST['phone'];
+		$address = $_POST['address'];
 
-		if($result){
-			echo "<script>alert('Registration Success! You can now Login');window.location.href='login.php';</script>";
+		$stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+		$result = $stmt->execute([':email'=>$email]);
+		$user = $stmt->fetch(PDO::FETCH_ASSOC);
+		if($user){
+			echo "<script>alert('Email duplicated')</script>";
+		}else{
+			$stmt = $pdo->prepare("INSERT INTO users(name,email,phone,address,password) VALUES (:name,:email,:phone,:address,:password)");
+
+			$result = $stmt->execute(
+				array(':name'=>$name,':email'=>$email,':phone'=>$phone,':address'=>$address,':password'=>$password)
+			);
+
+			if($result){
+				echo "<script>alert('Registration Success! You can now Login');window.location.href='login.php';</script>";
+			}
 		}
 	}
 }
@@ -164,7 +167,7 @@ if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['phone']) || 
 							</div>
 							<div class="col-md-12 form-group">
 								<input type="text" class="form-control" id="name" name="email" placeholder="Email" 
-								style="<?php echo empty($nameError) ? '' : 'border:1px solid red;'; ?>"
+								style="<?php echo empty($emailError) ? '' : 'border:1px solid red;'; ?>"
 								onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email'">
 							</div>
 							<div class="col-md-12 form-group">

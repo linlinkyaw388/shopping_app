@@ -8,12 +8,12 @@ require '../config/common.php';
 
 
 if(empty($_SESSION['user_id']) || empty($_SESSION['logged_in'])){
-  header('Location: /admin/login.php');
+  header('Location: login.php');
   exit();
 };
 
 if($_SESSION['role'] != 1){
-  header('Location: /admin/login.php');
+  header('Location: login.php');
 };
 
 $searchKey = '';
@@ -61,7 +61,7 @@ if(isset($_POST['search'])){
                 $pageno = 1;
               }
 
-              $numOfrecs = 1;
+              $numOfrecs = 5;
               $offset = ($pageno - 1) * $numOfrecs; //for pages
 
             
