@@ -22,4 +22,4 @@ epi 16 25min
 7.4.26->epi 21 done
         epi 22 7min
 
-8.4.26->epi 22
+8.4.26->epi 22 done
