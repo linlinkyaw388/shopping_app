@@ -24,11 +24,22 @@ if ($_POST) {
         if(password_verify($password,$user['password'])){
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['name'];
-            // $_SESSION['role'] = $user['role'];  //ဒီမှာမထည့်းလည်းရ။
+            $_SESSION['role'] = $user['role'];  //ဒီမှာမထည့်းလည်းရ။
             $_SESSION['logged_in'] = time();//true
+
+			if($_SESSION['role'] == 1){
+				header('Location: admin/index.php');
+            	exit();
+			}elseif($_SESSION['role'] == 0){
+				header('Location: index.php');
+            	exit();
+			}else{
+				header('Location: index.php');
+            	exit();
+			}
             
-            header('Location: index.php');
-            exit();
+            // header('Location: index.php');
+            // exit();
         }
 
     }

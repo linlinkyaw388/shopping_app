@@ -13,7 +13,7 @@ if(empty($_SESSION['user_id']) || empty($_SESSION['logged_in'])){
 };
 
 if($_SESSION['role'] != 1){
-  header('Location: /admin/login.php');
+  header('Location: login.php');
 };
 
 $searchKey = '';

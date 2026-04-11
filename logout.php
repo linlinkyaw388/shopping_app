@@ -3,4 +3,9 @@
 session_start();
 session_destroy();
 
-header("Location : login.php");
+echo "<script>
+        alert('Logout successful');
+        window.location.href='login.php';
+      </script>";
+exit();
+?>
